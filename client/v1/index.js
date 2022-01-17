@@ -75,6 +75,18 @@ console.log(brands_name);
 // 2. Create a variable and assign it the list of products by price from lowest to highest
 // 3. Log the variable
 
+function sorted_marketplace_price(marketplace){
+  let temp_marketplace =[]
+  marketplace.forEach(element => {
+    temp_marketplace.push(element.price)
+  });
+  console.log(temp_marketplace);
+  return temp_marketplace.sort(function(a, b){return a-b});
+}
+let new_sorted_marketplace_byPrice= sorted_marketplace_price(marketplace);
+console.log(new_sorted_marketplace_byPrice);
+
+
 
 // 🎯 TODO: Sort by date
 // 1. Create a function to sort the marketplace objects by products date
