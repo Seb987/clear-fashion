@@ -96,7 +96,7 @@ function sorted_marketplace_date(marketplace){
   marketplace.forEach(element => {    
     temp_marketplace.push(element.date);
   });
-  return (temp_marketplace.sort()).reverse();
+  return temp_marketplace.sort(function(a, b){return new Date(b)- new Date(a)});
 }
 let new_sorted_marketplace_byDate= sorted_marketplace_date(marketplace);
 console.log(new_sorted_marketplace_byDate);
