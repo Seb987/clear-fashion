@@ -106,6 +106,18 @@ console.log(new_sorted_marketplace_byDate);
 // 1. Filter the list of products between 50€ and 100€
 // 2. Log the list
 
+function filter_products(marketplace, min, max){
+  let temp_marketplace=[];
+  marketplace.forEach(element => {  
+    if(element.price > min & element.price < max)  {
+      temp_marketplace.push(element.price);
+    }
+  });
+  return temp_marketplace;
+}
+let filtered_marketplace =filter_products(marketplace, 50, 100);
+console.log(filtered_marketplace);
+
 
 // 🎯 TODO: Average Basket
 // 1. Determine the average basket of the marketplace
