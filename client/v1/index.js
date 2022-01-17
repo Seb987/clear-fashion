@@ -31,7 +31,7 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // 1. Create a new variable and assign it the link of the cheapest t-shirt
 // I can find on these e-shops
 // 2. Log the variable
-const cheapest_ts={'name':'Le T-shirt', 'url': 'https://www.loom.fr/products/le-t-shirt'};
+let cheapest_ts={'name':'Le T-shirt', 'url': 'https://www.loom.fr/products/le-t-shirt'};
 console.log("Cheapest T-shirt:",cheapest_ts);
 
 
@@ -53,13 +53,21 @@ console.log("Cheapest T-shirt:",cheapest_ts);
 // 1. Create a variable and assign it the number of products
 // 2. Log the variable
 const marketplace = require('./data.js');
-const nb_products = marketplace.length;
+let nb_products = marketplace.length;
 console.log("Number of products: ",nb_products);
 
 // 🎯 TODO: Brands name
 // 1. Create a variable and assign it the list of brands name only
 // 2. Log the variable
 // 3. Log how many brands we have
+let brands_name=[];
+for (let i=0; i< nb_products; i++){
+  if(!brands_name.includes(marketplace[i].brand)){
+    brands_name.push(marketplace[i].brand);
+  }
+}
+
+console.log(brands_name);
 
 
 // 🎯 TODO: Sort by price
