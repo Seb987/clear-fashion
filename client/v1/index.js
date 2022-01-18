@@ -310,6 +310,13 @@ console.log(reasonable_price);
 // 🎯 TODO: Find a specific product
 // 1. Find the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the product
+let specific_product;
+COTELE_PARIS.forEach(element => {
+  if(element.uuid=="b56c6d88-749a-5b4c-b571-e5b5c6483131") {
+    specific_product= element;
+  }
+})
+console.log(specific_product);
 
 
 // 🎯 TODO: Delete a specific product
