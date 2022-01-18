@@ -123,7 +123,11 @@ console.log(filtered_marketplace);
 // 1. Determine the average basket of the marketplace
 // 2. Log the average
 
-
+let avg_price=0
+marketplace.forEach(element => {
+  avg_price += element.price/nb_products;
+})
+console.log("Average price: ", avg_price);
 
 
 
