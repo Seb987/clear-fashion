@@ -177,20 +177,22 @@ Object.keys(brands).forEach(element => {
 // 1. For each brand, sort the products by price, from highest to lowest
 // 2. Log the sort
 
-
+let sorted_brand_by_price={};
 brands_name.forEach(names => {
-  brands[names].sort(function(a, b){return b.price-a.price});
+  sorted_brand_by_price[names]=brands[names].sort(function(a, b){return b.price-a.price});
 })
-console.log(brands);
+console.log(sorted_brand_by_price);
 
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
 // 2. Log the sort
 
-
-
-
+let sorted_brand_by_date={};
+brands_name.forEach(names => {
+  sorted_brand_by_date[names]=brands[names].sort(function(a, b){return new Date(a.date)- new Date(b.date)});
+})
+console.log(sorted_brand_by_date);
 
 /**
  * 💶
