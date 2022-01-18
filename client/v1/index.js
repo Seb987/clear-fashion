@@ -150,6 +150,24 @@ console.log(filtered_marketplace);
 // 2. Log the variable
 // 3. Log the number of products by brands
 
+let brands={};
+brands_name.forEach(names => {
+  let temp_arr =[];
+  marketplace.forEach(element => {
+    if(names == element.brand){
+      delete element["brand"];
+      temp_arr.push(element);
+    }
+  });
+  brands[names]=temp_arr;
+})
+console.log(brands);
+
+Object.keys(brands).forEach(element => {
+  console.log(element,": Number of products = ",brands[element].length)
+})
+
+
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
