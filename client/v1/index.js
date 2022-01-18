@@ -288,13 +288,23 @@ let new_released_Products = false;
 COTELE_PARIS.forEach(element => {
   var diff_In_time = new Date()- new Date(element.released);
   var diff_In_Days = diff_In_time/(1000*3600*24)
-  new_released_Products=diff_In_Days < 14;
+  if(diff_In_Days < 14) {
+    new_released_Products=true;
+  }
 })
 console.log(new_released_Products);
 
 // 🎯 TODO: Reasonable price
 // // 1. Log if coteleparis is a reasonable price shop (true or false)
 // // A reasonable price if all the products are less than 100€
+
+let reasonable_price = true;
+COTELE_PARIS.forEach(element => {
+  if(element.price > 100){
+    reasonable_price=false;
+  }
+})
+console.log(reasonable_price);
 
 
 // 🎯 TODO: Find a specific product
