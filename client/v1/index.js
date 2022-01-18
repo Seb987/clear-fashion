@@ -178,6 +178,12 @@ Object.keys(brands).forEach(element => {
 // 2. Log the sort
 
 
+brands_name.forEach(names => {
+  brands[names].sort(function(a, b){return b.price-a.price});
+})
+console.log(brands);
+
+
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
 // 2. Log the sort
