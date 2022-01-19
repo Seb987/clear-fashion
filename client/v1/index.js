@@ -323,6 +323,14 @@ console.log(specific_product);
 // 1. Delete the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the new list of product
 
+for(let i=0; i< COTELE_PARIS.length;i++){
+  if(COTELE_PARIS[i]. uuid=="b56c6d88-749a-5b4c-b571-e5b5c6483131") {
+    COTELE_PARIS.splice(i,1);
+  }
+}
+
+console.log(COTELE_PARIS);
+
 // 🎯 TODO: Save the favorite product
 let blueJacket = {
   'link': 'https://coteleparis.com/collections/tous-les-produits-cotele/products/la-veste-bleu-roi',
