@@ -22,19 +22,6 @@ const setCurrentProducts = ({result, meta}) => {
   currentPagination = meta;
 };
 
-const sortCurrentProductsByBrand = ({result, meta}, name) => {
-  let arr = []
-  if(name != "none"){
-    for (let i =0; i< result.length; i++){
-      if(result[i].brand==name && selectShow.value > arr.length){
-        arr.push(result[i]);
-      }
-    }
-  } else { arr = result;}
-  
-  currentProducts = arr;
-  currentPagination = meta;
-};
 
 /**
  * Fetch products from api
@@ -47,6 +34,27 @@ const fetchProducts = async (page = 1, size = 12) => {
     const response = await fetch(
       `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
     );
+    const body = await response.json();
+
+    if (body.success !== true) {
+      console.error(body);
+      return {currentProducts, currentPagination};
+    }
+
+    return body.data;
+  } catch (error) {
+    console.error(error);
+    return {currentProducts, currentPagination};
+  }
+};
+
+const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
+  try {
+    let string="";
+    if(brand !="none"){
+      string=`&brand=${brand}`;
+    }
+    const response = await fetch(`https://clear-fashion-api.vercel.app?page=${page}&size=${size}`+string);
     const body = await response.json();
 
     if (body.success !== true) {
@@ -126,25 +134,29 @@ const render = (products, pagination) => {
  */
 
 selectShow.addEventListener('change', async(event) => {
-  const products = await fetchProducts(1, parseInt(event.target.value));
+  const products = await fetchProductsByBrand(1, parseInt(event.target.value), selectBrand.value);
 
   setCurrentProducts(products);
-  sortCurrentProductsByBrand(products, selectBrand.value);
   render(currentProducts, currentPagination);
 });
 
+/**
+ * Select the page to browse to 
+ */
 selectPage.addEventListener('change', async(event) => {
-  const products = await fetchProducts(parseInt(event.target.value), selectShow.value);
+  const products = await fetchProductsByBrand(parseInt(event.target.value), selectShow.value, selectBrand.value);
 
   setCurrentProducts(products);
-  sortCurrentProductsByBrand(products, selectBrand.value);
   render(currentProducts, currentPagination);
 });
 
+/**
+ * Filter by brand
+ */
 selectBrand.addEventListener('change', async(event) => {
-  const products = await fetchProducts(selectPage.value, selectShow.value);
+  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, event.target.value.toLowerCase());
 
-  sortCurrentProductsByBrand(products, event.target.value.toLowerCase());
+  setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
 
