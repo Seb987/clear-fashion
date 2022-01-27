@@ -5,11 +5,12 @@
 let currentProducts = [];
 let currentPagination = {};
 
-// inititiqte selectors
+// instantiate the selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
+const selectBrand = document.querySelector('#brand-select');
 
 /**
  * Set global value
@@ -18,6 +19,20 @@ const spanNbProducts = document.querySelector('#nbProducts');
  */
 const setCurrentProducts = ({result, meta}) => {
   currentProducts = result;
+  currentPagination = meta;
+};
+
+const sortCurrentProductsByBrand = ({result, meta}, name) => {
+  let arr = []
+  if(name != "none"){
+    for (let i =0; i< result.length; i++){
+      if(result[i].brand==name && selectShow.value > arr.length){
+        arr.push(result[i]);
+      }
+    }
+  } else { arr = result;}
+  
+  currentProducts = arr;
   currentPagination = meta;
 };
 
@@ -108,22 +123,34 @@ const render = (products, pagination) => {
 
 /**
  * Select the number of products to display
- * @type {[type]}
  */
-selectShow.addEventListener('change', event => {
-  fetchProducts(1, parseInt(event.target.value))
-    .then(setCurrentProducts)
-    .then(() => render(currentProducts, currentPagination));
+
+selectShow.addEventListener('change', async(event) => {
+  const products = await fetchProducts(1, parseInt(event.target.value));
+
+  setCurrentProducts(products);
+  sortCurrentProductsByBrand(products, selectBrand.value);
+  render(currentProducts, currentPagination);
 });
 
-selectPage.addEventListener('change', event => {
-  fetchProducts(parseInt(event.target.value), selectShow.value)
-    .then(setCurrentProducts)
-    .then(() => render(currentProducts, currentPagination));
+selectPage.addEventListener('change', async(event) => {
+  const products = await fetchProducts(parseInt(event.target.value), selectShow.value);
+
+  setCurrentProducts(products);
+  sortCurrentProductsByBrand(products, selectBrand.value);
+  render(currentProducts, currentPagination);
 });
 
-document.addEventListener('DOMContentLoaded', () =>
-  fetchProducts()
-    .then(setCurrentProducts)
-    .then(() => render(currentProducts, currentPagination))
-);
+selectBrand.addEventListener('change', async(event) => {
+  const products = await fetchProducts(selectPage.value, selectShow.value);
+
+  sortCurrentProductsByBrand(products, event.target.value.toLowerCase());
+  render(currentProducts, currentPagination);
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const products = await fetchProducts();
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
