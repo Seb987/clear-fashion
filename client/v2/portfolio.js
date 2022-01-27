@@ -51,7 +51,7 @@ const fetchProducts = async (page = 1, size = 12) => {
 const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
   try {
     let string="";
-    if(brand !="none"){
+    if(brand !="all"){
       string=`&brand=${brand}`;
     }
     const response = await fetch(`https://clear-fashion-api.vercel.app?page=${page}&size=${size}`+string);
@@ -154,7 +154,7 @@ selectPage.addEventListener('change', async(event) => {
  * Filter by brand
  */
 selectBrand.addEventListener('change', async(event) => {
-  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, event.target.value.toLowerCase());
+  const products = await fetchProductsByBrand(1, selectShow.value, event.target.value.toLowerCase());
 
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
