@@ -17,6 +17,8 @@ const spanNbProducts = document.querySelector('#nbProducts');
 const selectBrand = document.querySelector('#brand-select');
 const btnRecent = document.querySelector('#recent_products');
 const btnPrice = document.querySelector('#reasonable_price');
+const selectSort = document.querySelector('#sort-select');
+const spanNbNewProducts = document.querySelector('#nbNewProducts');
 
 /**
  * Set global value
@@ -144,6 +146,31 @@ const isReasonablePrice = (price) => {
   return price < 50;
 }
 
+const countNewProducts = async() => {
+  try {
+    const response = await fetch(
+      `https://clear-fashion-api.vercel.app?page=1&size=139`
+    );
+    const body = await response.json();
+
+    if (body.success !== true) {
+      console.error(body);
+      return {currentProducts, currentPagination};
+    }
+    let nbNewProducts=0;
+    const results= body.data.result;
+    for(let i =0; i<results.length; i++){
+      if(isNew(results[i].released)){
+        nbNewProducts++;
+      }
+    }
+    return nbNewProducts;
+  } catch (error) {
+    console.error(error);
+    return {currentProducts, currentPagination};
+  }
+}
+
 
 /**
  * Render list of products
@@ -189,10 +216,12 @@ const renderPagination = pagination => {
  * Render page selector
  * @param  {Object} pagination
  */
-const renderIndicators = pagination => {
+const renderIndicators = async(pagination) => {
   const {count} = pagination;
 
   spanNbProducts.innerHTML = count;
+
+  spanNbNewProducts.innerHTML= await countNewProducts();
 };
 
 const render = (products, pagination) => {
@@ -235,6 +264,13 @@ selectBrand.addEventListener('change', async(event) => {
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
+/*
+selectSort.addEventListener('change', async(event)=> {
+  const products = await fetchProductsByBrand(1, selectShow.value, event.target.value.toLowerCase());
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+})*/
 
 /**
  * Call the fetch function if the toggle button is on and change it's color depending on it's state
