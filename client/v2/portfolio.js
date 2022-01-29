@@ -5,17 +5,22 @@
 let currentProducts = [];
 let currentPagination = {};
 
+//Bool for toggle button
+let releasedIsOn=false;
+
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 const selectBrand = document.querySelector('#brand-select');
+const btnRecent = document.querySelector('#recent_products');
 
 /**
  * Set global value
  * @param {Array} result - products to display
  * @param {Object} meta - pagination meta info
+ * 
  */
 const setCurrentProducts = ({result, meta}) => {
   currentProducts = result;
@@ -50,6 +55,9 @@ const fetchProducts = async (page = 1, size = 12) => {
 
 const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
   try {
+    if(releasedIsOn){
+        return fetchAllProducts(page, size, brand);
+    }
     let string="";
     if(brand !="all"){
       string=`&brand=${brand}`;
@@ -68,6 +76,62 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
     return {currentProducts, currentPagination};
   }
 };
+
+const fetchAllProducts = async(page = 1, size = 12, brand) => {
+  try {
+    let string="";
+    if(brand !="all"){
+      string=`&brand=${brand}`;
+    }
+    const response = await fetch(`https://clear-fashion-api.vercel.app?page=1&size=139`+string);
+    const body = await response.json();
+
+    if (body.success !== true) {
+      console.error(body);
+      return {currentProducts, currentPagination};
+    }
+    const filteredData={};
+    filteredData['result']=[]
+    const results=body.data.result;
+    for(let i=0;i< results.length;i++){
+        if(isNew(results[i].released)){
+            filteredData['result'].push(results[i]);
+        }
+    }
+    
+    filteredData['meta']={};
+    filteredData.meta['count']=filteredData['result'].length;
+    filteredData.meta['currentPage']= selectPage.value;
+    filteredData.meta['pageSize']=selectShow.value;
+    filteredData.meta['pageCount']=parseInt(Math.ceil(filteredData.meta.count/filteredData.meta.pageSize));
+    return filteredData;
+  } catch (error) {
+    console.error(error);
+    return {currentProducts, currentPagination};
+  }
+}
+
+const isNew = (released) => {
+    var diff_In_time = new Date()- new Date(released);
+    var diff_In_Days = diff_In_time/(1000*3600*24)
+    if(diff_In_Days < 14) {
+      return true;
+    }
+  return false;
+}
+
+const toggleReleased  = () =>  {
+  if(releasedIsOn){
+    btnRecent.style.background='';
+    releasedIsOn=false;
+  }else {
+    btnRecent.style.background='lightgreen'
+    releasedIsOn=true;
+  }
+  fetchProductsByBrand(1, selectShow.value, selectBrand.value)
+  .then(setCurrentProducts)
+  .then(() => render(currentProducts, currentPagination))
+} 
 
 /**
  * Render list of products
