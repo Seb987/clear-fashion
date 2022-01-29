@@ -5,8 +5,9 @@
 let currentProducts = [];
 let currentPagination = {};
 
-//Bool for toggle button
+//Bool for toggle button to know if the button is clicked or not
 let releasedIsOn=false;
+let reasonablePriceIsOn = false;
 
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
@@ -15,6 +16,7 @@ const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 const selectBrand = document.querySelector('#brand-select');
 const btnRecent = document.querySelector('#recent_products');
+const btnPrice = document.querySelector('#reasonable_price');
 
 /**
  * Set global value
@@ -52,10 +54,12 @@ const fetchProducts = async (page = 1, size = 12) => {
     return {currentProducts, currentPagination};
   }
 };
-
+/**
+ * Fetch only the products corresponding to the brand we need
+ */
 const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
   try {
-    if(releasedIsOn){
+    if(releasedIsOn||reasonablePriceIsOn){
         return fetchAllProducts(page, size, brand);
     }
     let string="";
@@ -77,7 +81,10 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
   }
 };
 
-const fetchAllProducts = async(page = 1, size = 12, brand) => {
+/**
+ * Fetch all products and filters and returns the values that we need (example: the new released products)
+ */
+const fetchAllProducts = async(page = 1, size = 12, brand, filter) => {
   try {
     let string="";
     if(brand !="all"){
@@ -94,9 +101,22 @@ const fetchAllProducts = async(page = 1, size = 12, brand) => {
     filteredData['result']=[]
     const results=body.data.result;
     for(let i=0;i< results.length;i++){
+      if(releasedIsOn){
         if(isNew(results[i].released)){
             filteredData['result'].push(results[i]);
         }
+      }
+      else if(reasonablePriceIsOn){
+        if(isReasonablePrice(results[i].price)){
+          filteredData['result'].push(results[i]);
+        }
+      }
+      else if(releasedIsOn&&reasonablePriceIsOn){
+        if(isNew(results[i].released && isReasonablePrice(results[i].price))){
+          filteredData['result'].push(results[i]);
+      }
+    }
+        
     }
     
     filteredData['meta']={};
@@ -112,26 +132,18 @@ const fetchAllProducts = async(page = 1, size = 12, brand) => {
 }
 
 const isNew = (released) => {
-    var diff_In_time = new Date()- new Date(released);
-    var diff_In_Days = diff_In_time/(1000*3600*24)
-    if(diff_In_Days < 14) {
-      return true;
-    }
+  var diff_In_time = new Date()- new Date(released);
+  var diff_In_Days = diff_In_time/(1000*3600*24)
+  if(diff_In_Days < 14) {
+    return true;
+  }
   return false;
 }
 
-const toggleReleased  = () =>  {
-  if(releasedIsOn){
-    btnRecent.style.background='';
-    releasedIsOn=false;
-  }else {
-    btnRecent.style.background='lightgreen'
-    releasedIsOn=true;
-  }
-  fetchProductsByBrand(1, selectShow.value, selectBrand.value)
-  .then(setCurrentProducts)
-  .then(() => render(currentProducts, currentPagination))
-} 
+const isReasonablePrice = (price) => {
+  return price < 50;
+}
+
 
 /**
  * Render list of products
@@ -223,6 +235,35 @@ selectBrand.addEventListener('change', async(event) => {
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
+
+/**
+ * Call the fetch function if the toggle button is on and change it's color depending on it's state
+ */
+const toggleReleased  = () =>  {
+  if(releasedIsOn){
+    btnRecent.style.background='';
+    releasedIsOn=false;
+  }else {
+    btnRecent.style.background='lightgreen'
+    releasedIsOn=true;
+  }
+  fetchProductsByBrand(1, selectShow.value, selectBrand.value)
+  .then(setCurrentProducts)
+  .then(() => render(currentProducts, currentPagination))
+} 
+
+const togglePrice  = () =>  {
+  if(reasonablePriceIsOn){
+    btnPrice.style.background='';
+    reasonablePriceIsOn=false;
+  }else {
+    btnPrice.style.background='lightgreen'
+    reasonablePriceIsOn=true;
+  }
+  fetchProductsByBrand(1, selectShow.value, selectBrand.value)
+  .then(setCurrentProducts)
+  .then(() => render(currentProducts, currentPagination))
+} 
 
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
