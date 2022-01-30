@@ -22,6 +22,7 @@ const spanNbNewProducts = document.querySelector('#nbNewProducts');
 const spanPriceValueP50 = document.querySelector('#valueP50');
 const spanPriceValueP90 = document.querySelector('#valueP90');
 const spanPriceValueP95 = document.querySelector('#valueP95');
+const spanLastReleased = document.querySelector('#lastReleasedDate');
 
 /**
  * Set global value
@@ -214,7 +215,32 @@ const priceValue = async(percentile) => {
 }
 
 /**
- * sort an array by price from highest to low
+ *  fetch all the data in the API, sort the array by date to find the last released date
+ * @param {number} percentile 
+ * @returns {number}
+ */
+ const lastReleased = async() => {
+  try {
+    const response = await fetch(
+      `https://clear-fashion-api.vercel.app?page=1&size=139`
+    );
+    const body = await response.json();
+
+    if (body.success !== true) {
+      console.error(body);
+      return {currentProducts, currentPagination};
+    }
+    const sortedArr=sortedByDate(body.data.result);
+    const lastReleased = sortedArr[0];
+    return lastReleased;
+  } catch (error) {
+    console.error(error);
+    return {currentProducts, currentPagination};
+  }
+}
+
+/**
+ * sort an array by price from highest to lowest
  * @param {object} arr 
  * @returns  {object}
  */
@@ -224,6 +250,19 @@ const sortedByPrice =(arr) => {
     temp_arr.push(arr[i].price);
   }
   return temp_arr.sort(function(a, b){return b-a});
+}
+
+/**
+ * sort an array by date from from most recent to most ancient
+ * @param {object} arr 
+ * @returns  {object}
+ */
+ const sortedByDate =(arr) => {
+  let temp_arr =[]
+  for(let i =0; i< arr.length; i++){
+    temp_arr.push(arr[i].released);
+  }
+  return temp_arr.sort(function(a, b){return new Date(b)-new Date(a)});
 }
 
 /**
@@ -279,6 +318,7 @@ const renderIndicators = async(pagination) => {
   spanPriceValueP50.innerHTML = await priceValue(50);
   spanPriceValueP90.innerHTML = await priceValue(90);
   spanPriceValueP95.innerHTML = await priceValue(95);
+  spanLastReleased.innerHTML = await lastReleased();
 };
 
 const render = (products, pagination) => {
