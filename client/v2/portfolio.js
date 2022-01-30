@@ -19,6 +19,9 @@ const btnRecent = document.querySelector('#recent_products');
 const btnPrice = document.querySelector('#reasonable_price');
 const selectSort = document.querySelector('#sort-select');
 const spanNbNewProducts = document.querySelector('#nbNewProducts');
+const spanPriceValueP50 = document.querySelector('#valueP50');
+const spanPriceValueP90 = document.querySelector('#valueP90');
+const spanPriceValueP95 = document.querySelector('#valueP95');
 
 /**
  * Set global value
@@ -132,7 +135,11 @@ const fetchAllProducts = async(page = 1, size = 12, brand, filter) => {
     return {currentProducts, currentPagination};
   }
 }
-
+/**
+ * check whether or not a date is considered as recent (less than two weeks)
+ * @param {date} released 
+ * @returns {boolean}
+ */
 const isNew = (released) => {
   var diff_In_time = new Date()- new Date(released);
   var diff_In_Days = diff_In_time/(1000*3600*24)
@@ -142,10 +149,19 @@ const isNew = (released) => {
   return false;
 }
 
+/**
+ *  checks whteter or not a price is reasonable (less than 50euros)
+ * @param {number} price 
+ * @returns {boolean}
+ */
 const isReasonablePrice = (price) => {
   return price < 50;
 }
 
+/**
+ * fetch all the data in the API and returns the number of new products it can count
+ * @returns {number}
+ */
 const countNewProducts = async() => {
   try {
     const response = await fetch(
@@ -171,6 +187,44 @@ const countNewProducts = async() => {
   }
 }
 
+/**
+ *  fetch all the data in the API, sort the array by price to find the corresponding percentile value
+ * @param {number} percentile 
+ * @returns {number}
+ */
+const priceValue = async(percentile) => {
+  try {
+    const response = await fetch(
+      `https://clear-fashion-api.vercel.app?page=1&size=139`
+    );
+    const body = await response.json();
+
+    if (body.success !== true) {
+      console.error(body);
+      return {currentProducts, currentPagination};
+    }
+    const sortedArr=sortedByPrice(body.data.result);
+    const percentile_index= parseInt(sortedArr.length*percentile/100);
+    const priceVal = sortedArr[percentile_index];
+    return priceVal;
+  } catch (error) {
+    console.error(error);
+    return {currentProducts, currentPagination};
+  }
+}
+
+/**
+ * sort an array by price from highest to low
+ * @param {object} arr 
+ * @returns  {object}
+ */
+const sortedByPrice =(arr) => {
+  let temp_arr =[]
+  for(let i =0; i< arr.length; i++){
+    temp_arr.push(arr[i].price);
+  }
+  return temp_arr.sort(function(a, b){return b-a});
+}
 
 /**
  * Render list of products
@@ -222,6 +276,9 @@ const renderIndicators = async(pagination) => {
   spanNbProducts.innerHTML = count;
 
   spanNbNewProducts.innerHTML= await countNewProducts();
+  spanPriceValueP50.innerHTML = await priceValue(50);
+  spanPriceValueP90.innerHTML = await priceValue(90);
+  spanPriceValueP95.innerHTML = await priceValue(95);
 };
 
 const render = (products, pagination) => {
@@ -287,7 +344,6 @@ const toggleReleased  = () =>  {
   .then(setCurrentProducts)
   .then(() => render(currentProducts, currentPagination))
 } 
-
 const togglePrice  = () =>  {
   if(reasonablePriceIsOn){
     btnPrice.style.background='';
