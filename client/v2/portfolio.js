@@ -90,7 +90,7 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
 /**
  * Fetch all products and filters and returns the values that we need (example: the new released products)
  */
-const fetchAllProducts = async(page = 1, size = 12, brand, filter) => {
+const fetchAllProducts = async(page = 1, size = 12, brand) => {
   try {
     let string="";
     if(brand !="all"){
@@ -107,29 +107,31 @@ const fetchAllProducts = async(page = 1, size = 12, brand, filter) => {
     filteredData['result']=[]
     const results=body.data.result;
     for(let i=0;i< results.length;i++){
-      if(releasedIsOn){
+      //Manage the different cases of both button
+      if(releasedIsOn){ //Only if released button is on
         if(isNew(results[i].released)){
             filteredData['result'].push(results[i]);
         }
       }
-      else if(reasonablePriceIsOn){
+      else if(reasonablePriceIsOn){ //If reasonable price button is on and released button is off
         if(isReasonablePrice(results[i].price)){
           filteredData['result'].push(results[i]);
         }
       }
-      else if(releasedIsOn&&reasonablePriceIsOn){
+      else if(releasedIsOn&&reasonablePriceIsOn){ //If both reasonable price and released button
         if(isNew(results[i].released && isReasonablePrice(results[i].price))){
           filteredData['result'].push(results[i]);
       }
     }
         
-    }
+  }
     
     filteredData['meta']={};
     filteredData.meta['count']=filteredData['result'].length;
     filteredData.meta['currentPage']= selectPage.value;
     filteredData.meta['pageSize']=selectShow.value;
     filteredData.meta['pageCount']=parseInt(Math.ceil(filteredData.meta.count/filteredData.meta.pageSize));
+    //We reupdate the meta key with the new filtered data
     return filteredData;
   } catch (error) {
     console.error(error);
@@ -176,7 +178,7 @@ const countNewProducts = async() => {
     }
     let nbNewProducts=0;
     const results= body.data.result;
-    for(let i =0; i<results.length; i++){
+    for(let i =0; i<results.length; i++){//Check for each product if the released date is less than 2 weeks
       if(isNew(results[i].released)){
         nbNewProducts++;
       }
@@ -204,9 +206,9 @@ const priceValue = async(percentile) => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-    const sortedArr=sortedByPrice(body.data.result);
-    const percentile_index= parseInt(sortedArr.length*percentile/100);
-    const priceVal = sortedArr[percentile_index];
+    const sortedArr=sortedByPrice(body.data.result);//Sort the array by price  in order descending
+    const percentile_index= parseInt(sortedArr.length*percentile/100); //Calculate the percentile index depending on the array length
+    const priceVal = sortedArr[percentile_index]; 
     return priceVal;
   } catch (error) {
     console.error(error);
@@ -230,8 +232,8 @@ const priceValue = async(percentile) => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-    const sortedArr=sortedByDate(body.data.result);
-    const lastReleased = sortedArr[0];
+    const sortedArr=sortedByDate(body.data.result); //Sort the array by date from most recent to oldest
+    const lastReleased = sortedArr[0]; //returns the first element of the array since it's sorted from recent to oldest
     return lastReleased;
   } catch (error) {
     console.error(error);
