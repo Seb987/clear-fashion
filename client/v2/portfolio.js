@@ -131,7 +131,7 @@ const isReasonablePrice = (price) => {
 const countNewProducts = async() => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=1&size=139`
+      `https://clear-fashion-api.vercel.app?page=1&size=${spanNbProducts.innerHTML}`
     );
     const body = await response.json();
 
@@ -161,7 +161,7 @@ const countNewProducts = async() => {
 const priceValue = async(percentile) => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=1&size=139`
+      `https://clear-fashion-api.vercel.app?page=1&size=${spanNbProducts.innerHTML}`
     );
     const body = await response.json();
 
@@ -187,7 +187,7 @@ const priceValue = async(percentile) => {
  const lastReleased = async() => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=1&size=139`
+      `https://clear-fashion-api.vercel.app?page=1&size=${spanNbProducts.innerHTML}`
     );
     const body = await response.json();
 
@@ -326,14 +326,13 @@ selectBrand.addEventListener('change', async(event) => {
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
-/*
+
 selectSort.addEventListener('change', async(event)=> {
   const products = await fetchProductsByBrand(1, selectShow.value, selectBrand.value);
-  let sorted_brand_by_price={};
-  const sort = event.target.value;
-  switch(sort){
+  let sorted_brand_by_price=[];
+  switch(event.target.value){
     case "price-asc":
-      sorted_brand_by_price=products.results.sort(function(a, b){return a.price-b.price});
+      sorted_brand_by_price=sortedByPrice(products.result)
       break;
     case "price-desc":
       sorted_brand_by_price=products.results.sort(function(a, b){return b.price-a.price});
@@ -351,9 +350,6 @@ selectSort.addEventListener('change', async(event)=> {
   render(currentProducts, currentPagination);
 })
 
-const sortDictByPrice = (dict) => {
-
-}*/
 
 /**
  * Call the fetch function if the toggle button is on and change it's color depending on it's state
