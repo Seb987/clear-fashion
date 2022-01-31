@@ -65,9 +65,6 @@ const fetchProducts = async (page = 1, size = 12) => {
  */
 const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
   try {
-    if(releasedIsOn||reasonablePriceIsOn){
-        return fetchAllProducts(page, size, brand);
-    }
     let string="";
     if(brand !="all"){
       string=`&brand=${brand}`;
@@ -79,7 +76,24 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-
+    if(releasedIsOn){
+      let filteredProducts=[]
+      body.data.result.forEach(element =>{
+        if(isNew(element.released)){
+          filteredProducts.push(element)
+        }
+      })
+      body.data.result=filteredProducts
+    }
+    if(reasonablePriceIsOn){
+      let filteredProducts=[]
+      body.data.result.forEach(element =>{
+        if(isReasonablePrice(element.price)){
+          filteredProducts.push(element)
+        }
+      })
+      body.data.result=filteredProducts
+    }
     return body.data;
   } catch (error) {
     console.error(error);
@@ -87,57 +101,6 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
   }
 };
 
-/**
- * Fetch all products and filters and returns the values that we need (example: the new released products)
- */
-const fetchAllProducts = async(page = 1, size = 12, brand) => {
-  try {
-    let string="";
-    if(brand !="all"){
-      string=`&brand=${brand}`;
-    }
-    const response = await fetch(`https://clear-fashion-api.vercel.app?page=1&size=139`+string);
-    const body = await response.json();
-
-    if (body.success !== true) {
-      console.error(body);
-      return {currentProducts, currentPagination};
-    }
-    const filteredData={};
-    filteredData['result']=[]
-    const results=body.data.result;
-    for(let i=0;i< results.length;i++){
-      //Manage the different cases of both button
-      if(releasedIsOn){ //Only if released button is on
-        if(isNew(results[i].released)){
-            filteredData['result'].push(results[i]);
-        }
-      }
-      else if(reasonablePriceIsOn){ //If reasonable price button is on and released button is off
-        if(isReasonablePrice(results[i].price)){
-          filteredData['result'].push(results[i]);
-        }
-      }
-      else if(releasedIsOn&&reasonablePriceIsOn){ //If both reasonable price and released button
-        if(isNew(results[i].released && isReasonablePrice(results[i].price))){
-          filteredData['result'].push(results[i]);
-      }
-    }
-        
-  }
-    
-    filteredData['meta']={};
-    filteredData.meta['count']=filteredData['result'].length;
-    filteredData.meta['currentPage']= selectPage.value;
-    filteredData.meta['pageSize']=selectShow.value;
-    filteredData.meta['pageCount']=parseInt(Math.ceil(filteredData.meta.count/filteredData.meta.pageSize));
-    //We reupdate the meta key with the new filtered data
-    return filteredData;
-  } catch (error) {
-    console.error(error);
-    return {currentProducts, currentPagination};
-  }
-}
 /**
  * check whether or not a date is considered as recent (less than two weeks)
  * @param {date} released 
@@ -395,7 +358,7 @@ const sortDictByPrice = (dict) => {
 /**
  * Call the fetch function if the toggle button is on and change it's color depending on it's state
  */
-const toggleReleased  = () =>  {
+const toggleReleased  = async() =>  {
   if(releasedIsOn){
     btnRecent.style.background='';
     releasedIsOn=false;
@@ -403,11 +366,11 @@ const toggleReleased  = () =>  {
     btnRecent.style.background='lightgreen'
     releasedIsOn=true;
   }
-  fetchProductsByBrand(1, selectShow.value, selectBrand.value)
-  .then(setCurrentProducts)
-  .then(() => render(currentProducts, currentPagination))
+  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
 } 
-const togglePrice  = () =>  {
+const togglePrice  = async() =>  {
   if(reasonablePriceIsOn){
     btnPrice.style.background='';
     reasonablePriceIsOn=false;
@@ -415,9 +378,9 @@ const togglePrice  = () =>  {
     btnPrice.style.background='lightgreen'
     reasonablePriceIsOn=true;
   }
-  fetchProductsByBrand(1, selectShow.value, selectBrand.value)
-  .then(setCurrentProducts)
-  .then(() => render(currentProducts, currentPagination))
+  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
 } 
 
 document.addEventListener('DOMContentLoaded', async () => {
