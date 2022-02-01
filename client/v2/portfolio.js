@@ -76,7 +76,7 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-    if(releasedIsOn){
+    if(releasedIsOn){ //Filter by reasonable price if the button is on
       let filteredProducts=[]
       body.data.result.forEach(element =>{
         if(isNew(element.released)){
@@ -85,7 +85,7 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
       })
       body.data.result=filteredProducts
     }
-    if(reasonablePriceIsOn){
+    if(reasonablePriceIsOn){ //Filter by recently released if the button is on
       let filteredProducts=[]
       body.data.result.forEach(element =>{
         if(isReasonablePrice(element.price)){
@@ -94,6 +94,23 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
       })
       body.data.result=filteredProducts
     }
+    
+  switch(selectSort.value){ //sort the result accordingly to the label
+    case "price-asc":
+      body.data.result=body.data.result.sort(function (a, b) { return a.price - b.price;});
+      break;
+    case "price-desc":
+      body.data.result=body.data.result.sort(function (a, b) { return b.price - a.price;});
+      break;
+    case "date-desc":
+      body.data.result=body.data.result.sort(function (a, b) { return new Date(b.released) - new Date(a.released);});
+      break;
+    case "date-asc":
+      body.data.result=body.data.result.sort(function (a, b) { return new Date(a.released) - new Date(b.released);});
+      break;
+    default:
+      break;
+  }
     return body.data;
   } catch (error) {
     console.error(error);
@@ -109,7 +126,7 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
 const isNew = (released) => {
   var diff_In_time = new Date()- new Date(released);
   var diff_In_Days = diff_In_time/(1000*3600*24)
-  if(diff_In_Days < 14) {
+  if(diff_In_Days <= 14) {
     return true;
   }
   return false;
@@ -241,6 +258,7 @@ const renderProducts = products => {
     .map(product => {
       return `
       <div class="product" id=${product.uuid}>
+        <span>${product.released}</span>
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}</span>
@@ -321,32 +339,15 @@ selectPage.addEventListener('change', async(event) => {
  * Filter by brand
  */
 selectBrand.addEventListener('change', async(event) => {
-  const products = await fetchProductsByBrand(1, selectShow.value, event.target.value.toLowerCase());
+  const products = await fetchProductsByBrand(1, selectShow.value, event.target.value);
 
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
 
 selectSort.addEventListener('change', async(event)=> {
-  const products = await fetchProductsByBrand(1, selectShow.value, selectBrand.value);
-  let sorted_brand_by_price=[];
-  switch(event.target.value){
-    case "price-asc":
-      sorted_brand_by_price=sortedByPrice(products.result)
-      break;
-    case "price-desc":
-      sorted_brand_by_price=products.results.sort(function(a, b){return b.price-a.price});
-      break;
-    case "date-asc":
-      sorted_brand_by_price=products.results.sort(function(a, b){return new Date(a.date)- new Date(b.date)});
-      break;
-    case "date-desc":
-      sorted_brand_by_price=products.results.sort(function(a, b){return new Date(b.date)- new Date(a.date)});
-      break;
-    default:
-      break;
-  }
-  setCurrentProducts(sorted_brand_by_price, products.currentPagination);
+  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
+  setCurrentProducts(products);
   render(currentProducts, currentPagination);
 })
 
