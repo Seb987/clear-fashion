@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>👕 Clear Fahion | Environmentally & human-friendly clothes</title>
   </head>
@@ -20,48 +21,56 @@
         <select name="page" id="page-select"> </select>
       </div>
       <div id="filters">
-        <span>By reasonable price</span>
-        <span>By recently released</span>
+        <input id="reasonable_price" type="button" onclick="togglePrice()" value="By reasonable price"/>
+        <input id="recent_products" type="button" onclick="toggleReleased()" value="By recently released"/>
         <div id="brand">
           <label for="brand-select">By brands:</label>
-          <select name="brand" id="brand-select"> </select>
+          <select name="brand" id="brand-select">
+            <option value="all">All</option> 
+            <option value="loom">Loom</option>
+            <option value="adresse">Adresse</option>
+            <option value="dedicated">Dedicated</option>
+            <option value="1083">1083</option>
+            <option value="coteleparis">Coteleparis</option>
+          </select>
         </div>
       </div>
       <div id="sort">
         <label for="sort-select">Sort:</label>
         <select name="sort" id="sort-select">
+          <option value="no-sort">None</option>
           <option value="price-asc">Cheaper</option>
           <option value="price-desc">Expensive</option>
-          <option value="date-asc">Recently released</option>
-          <option value="date-desc">Anciently released</option>
+          <option value="date-desc">Recently released</option>
+          <option value="date-asc">Anciently released</option>
         </select>
       </div>
     </section>
     <section id="indicators">
       <h2>Indicators</h2>
       <div>
-        <span>Number of products</span>
+        <span>Number of products : </span>
         <span id="nbProducts">0</span>
       </div>
       <div>
-        <span>Number of new products</span>
-        <span>0</span>
+        <span>Number of new products : </span>
+        <span id="nbNewProducts">0</span>
       </div>
       <div>
-        <span>p50 price value</span>
-        <span>0</span>
+        <span>p50 price value : </span>
+        <span id="valueP50">0</span>
       </div>
       <div>
-        <span>p90 price value</span>
-        <span>0</span>
+        <span>p90 price value : </span>
+        <span id="valueP90">0</span>
       </div>
       <div>
-        <span>p95 price value</span>
-        <span>0</span>
+        <span>p95 price value : </span>
+        <span id="valueP95">0</span>
       </div>
       <div>
-        <span>Last released date</span>
-        <span>2020-01-01</span>
+        <span>Last released date : </span>
+        <span id="lastReleasedDate">2020-01-01</span>
       </div>
     </section>
     <section id="products"></section>

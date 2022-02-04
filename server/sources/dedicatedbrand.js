@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
-
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -21,8 +20,13 @@ const parse = data => {
           .find('.productList-price')
           .text()
       );
+      const materialInfo = $(element)
+        .find('.productList-image-materialInfo')
+        .text()
+        .trim()
+        .replace(/\s/g, ' ');
 
-      return {name, price};
+      return {name, price, materialInfo};
     })
     .get();
 };
@@ -38,7 +42,6 @@ module.exports.scrape = async url => {
 
     if (response.ok) {
       const body = await response.text();
-
       return parse(body);
     }
 

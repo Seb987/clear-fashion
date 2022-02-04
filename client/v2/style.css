@@ -1,0 +1,47 @@
+body {
+    background-color: rgb(223, 223, 223);
+    color : rgb(255, 255, 255); 
+}
+  
+h1 {
+    color: #000000;
+    font-size: 30px; 
+}
+
+h2 {
+    color: #000000;
+    font-size: 20;
+}
+
+#options{
+    overflow: hidden;
+    background-color: rgb(241, 47, 47);
+}
+
+#options div {
+    display: block;
+    color: #dddddd;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 15px;
+  }
+
+#indicators{
+    overflow: hidden;
+}
+ 
+#indicators div {
+    background-color: rgb(240, 74, 74);
+    display: block;
+    color: #dddddd;
+    padding: 15px 20px;
+    font-size: 15px;
+    float: left;
+  }
+
+#products div{
+    background-color: rgb(255, 113, 113);
+    display: block;
+    padding: 5px;
+    font-size: 15px;
+}
