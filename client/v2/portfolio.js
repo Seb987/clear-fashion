@@ -8,6 +8,7 @@ let currentPagination = {};
 //Bool for toggle button to know if the button is clicked or not
 let releasedIsOn=false;
 let reasonablePriceIsOn = false;
+let favoriteIsOn = false;
 
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
@@ -17,12 +18,15 @@ const spanNbProducts = document.querySelector('#nbProducts');
 const selectBrand = document.querySelector('#brand-select');
 const btnRecent = document.querySelector('#recent_products');
 const btnPrice = document.querySelector('#reasonable_price');
+const btnFav = document.querySelector('#fav_products');
 const selectSort = document.querySelector('#sort-select');
 const spanNbNewProducts = document.querySelector('#nbNewProducts');
 const spanPriceValueP50 = document.querySelector('#valueP50');
 const spanPriceValueP90 = document.querySelector('#valueP90');
 const spanPriceValueP95 = document.querySelector('#valueP95');
 const spanLastReleased = document.querySelector('#lastReleasedDate');
+const checkboxesAddToFav = document.querySelectorAll('input[type=checkbox]');
+
 
 /**
  * Set global value
@@ -258,6 +262,7 @@ const renderProducts = products => {
     .map(product => {
       return `
       <div class="product" id=${product.uuid}>
+        <input type="checkbox">
         <span>${product.released}</span>
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
@@ -374,6 +379,18 @@ const togglePrice  = async() =>  {
   }else {
     btnPrice.style.background='lightgreen'
     reasonablePriceIsOn=true;
+  }
+  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+} 
+const toggleFavorite  = async() =>  {
+  if(favoriteIsOn){
+    btnFav.style.background='';
+    favoriteIsOn=false;
+  }else {
+    btnFav.style.background='lightgreen'
+    favoriteIsOn=true;
   }
   const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
   setCurrentProducts(products);
