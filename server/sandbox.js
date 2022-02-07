@@ -3,9 +3,9 @@ const dedicatedbrand = require('./sources/dedicatedbrand');
 const fs = require('fs');
 
 
-async function sandbox (eshop = 'https://www.dedicatedbrand.com/en/men/all-men#page2') {
+async function sandbox (eshop) {
   try {
-    console.log(`🕵️‍♀️  browsing ${eshop} source`);
+    //console.log(`🕵️‍♀️  browsing ${eshop} source`);
 
     const products = await dedicatedbrand.scrape(eshop);
     console.log(products);
