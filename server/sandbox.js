@@ -1,5 +1,6 @@
 /* eslint-disable no-console, no-process-exit */
 const dedicatedbrand = require('./sources/dedicatedbrand');
+const montlimart = require('./sources/montlimart.js')
 const fs = require('fs');
 
 
@@ -7,7 +8,7 @@ async function sandbox (eshop) {
   try {
     //console.log(`🕵️‍♀️  browsing ${eshop} source`);
 
-    const products = await dedicatedbrand.scrape(eshop);
+    const products = await montlimart.scrape(eshop);
     console.log(products);
     console.log('done');
   /*
