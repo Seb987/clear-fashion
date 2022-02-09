@@ -10,8 +10,13 @@ async function sandbox (eshop) {
     //console.log(`🕵️‍♀️  browsing ${eshop} source`);
     const products_dedicatedBrand = await dedicatedbrand.scrape(eshop);
     const products_montlimart = await montlimart.scrape(eshop);
-    const products_adresseParis = await adresseparis.scrape(eshop)
-    console.log(products_montlimart);
+    const products_adresseParis = await adresseparis.scrape(eshop);
+
+    //Merge all products into one array
+    const temp = products_dedicatedBrand.concat(products_montlimart);
+    const products = temp.concat(products_adresseParis)
+
+    console.log(products);
     console.log('done');
   /*
     try {
