@@ -62,7 +62,7 @@ module.exports.scrape = async (url='https://www.dedicatedbrand.com/en/loadfilter
       filteredProducts.forEach(element => {
         temp={};
         temp['name']=element.name;
-        temp['price']=element.price.price;
+        temp['price']=parseInt(element.price.price);
         filter.push(temp)
 
       })
