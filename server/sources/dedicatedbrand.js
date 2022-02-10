@@ -20,13 +20,8 @@ const parse = data => {
           .find('.productList-price')
           .text()
       );
-      const materialInfo = $(element)
-        .find('.productList-image-materialInfo')
-        .text()
-        .trim()
-        .replace(/\s/g, ' ');
 
-      return {name, price, materialInfo};
+      return {name, price};
     })
     .get();
 };
