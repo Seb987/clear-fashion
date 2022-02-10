@@ -17,7 +17,7 @@ const parse = data => {
         .replace(/\s/g, ' ');
       const price = parseInt(
         $(element)
-          .find('span.price')
+          .find('.price')
           .text()
       );
 
