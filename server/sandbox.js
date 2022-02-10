@@ -16,8 +16,8 @@ async function sandbox (eshop) {
     const temp = products_dedicatedBrand.concat(products_montlimart);
     const products = temp.concat(products_adresseParis)
 
-    console.log(products);
-    console.log('done');
+    //console.log(products);
+    //console.log('done');
   /*
     try {
         fs.writeFileSync('products.json', JSON.stringify(products));

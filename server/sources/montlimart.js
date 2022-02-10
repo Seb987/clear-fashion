@@ -8,16 +8,16 @@ const cheerio = require('cheerio');
 const parse = data => {
   const $ = cheerio.load(data);
 
-  return $('.product-info')
+  return $('.category-products .product-info')
     .map((i, element) => {
       const name = $(element)
         .find('.product-name')
         .text()
         .trim()
         .replace(/\s/g, ' ');
-      const price = (
+      const price = parseInt(
         $(element)
-          .find('.price')
+          .find('span.price')
           .text()
       );
 
@@ -31,7 +31,7 @@ const parse = data => {
  * @param  {[type]}  url
  * @return {Array|null}
  */
- module.exports.scrape = async (url='https://www.montlimart.com/toute-la-collection.html') => {
+ module.exports.scrape = async (url='https://www.montlimart.com/toute-la-collection.html?limit=all') => {
     try {
       const response = await fetch(url);
   
