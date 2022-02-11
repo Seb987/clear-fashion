@@ -19,7 +19,7 @@ const parse = data => {
           .text()
       );
 
-      return {name, price};
+      return {"brand":"Adresse Paris",name, price};
     })
     .get();
 };

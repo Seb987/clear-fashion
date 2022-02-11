@@ -56,6 +56,7 @@ module.exports.scrape = async (url='https://www.dedicatedbrand.com/en/loadfilter
       //We decide to only display the name and the price of the product
       filteredProducts.forEach(element => {
         temp={};
+        temp['brand']='Dedicated Brand'
         temp['name']=element.name;
         temp['price']=parseInt(element.price.price);
         filter.push(temp)

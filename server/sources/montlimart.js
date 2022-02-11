@@ -21,7 +21,7 @@ const parse = data => {
           .text()
       );
 
-      return {name, price};
+      return {"brand":"Montlimart",name, price};
     })
     .get();
 };
