@@ -14,7 +14,8 @@ async function start() {
   //find_Brand(collection, 'Adresse Paris');
   //find_filter_price(collection, 0 , 50);
   //sorted_by_price(collection)
-  sorted_by_date(collection);
+  //sorted_by_date(collection);
+  products_recently_scraped(collection)
   /*
   const products = await collection.find().toArray();
   console.log(products);*/
@@ -44,6 +45,7 @@ async function find_filter_price(collection, min, max){
   });
 }
 
+//Sort the product by price from lowest to highest
 async function sorted_by_price(collection){
   const products = await collection.find().toArray();
   const products_sorted = products.sort(function(a, b){return a.price - b.price});
@@ -51,10 +53,23 @@ async function sorted_by_price(collection){
   console.log(products_sorted)
 }
 
+//Sort the product by date from oldest to newest
 async function sorted_by_date(collection){
   const products = await collection.find().toArray();
   const products_sorted = products.sort(function(a, b){return new Date(b.released_Date) - new Date(a.released_Date)});
   
   console.log(products_sorted)
+}
+
+//Displays products scraped less than 2 weeks
+async function products_recently_scraped(collection){
+  const products = await collection.find().toArray();
+  products.forEach(element => {
+    var diff_In_time = new Date()- new Date(element.released_Date);
+    var diff_In_Days = diff_In_time/(1000*3600*24)
+    if(diff_In_Days < 14) {
+      console.log(element)
+    }
+  })
 }
 
