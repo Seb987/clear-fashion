@@ -1,6 +1,6 @@
 
 const { MongoClient } = require('mongodb');
-const MONGODB_URI = "mongodb+srv://seb:IMQdE9q5owHiV1CF@products.y0vdk.mongodb.net/products?retryWrites=true&w=majority";
+const MONGODB_URI = "mongodb+srv://seb:IMQdE9q5owHiV1CF@products.y0vdk.mongodb.net/Products?retryWrites=true&w=majority";
 const MONGODB_DB_NAME = 'products';
 
 async function start() {
@@ -10,24 +10,22 @@ async function start() {
 
     const collection = db.collection('products');
 
-    console.log(collection.products);
+    //console.log(collection);
+    /*Insert the products in the database
+    const products= require('./products.json');
+    const result = collection.insertMany(products);
+    console.log(result);
+    
+*/
+  find_Brand(collection, 'Adresse Paris');
+  
 }
 start()
 
+async function find_Brand(collection, brand){
+  const products = await collection.find({brand}).toArray();;
 
-
-/*
-const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://seb:IMQdE9q5owHiV1CF@<cluster-url>?retryWrites=true&writeConcern=majority';
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-client.connect(err => {
-  const collection = client.db("test").collection("products");
-  const brand = 'montlimart';
-  const products = collection.find({brand}).toArray();
   console.log(products);
-  // perform actions on the collection object
-  client.close();
-});*/
+}
 
 
