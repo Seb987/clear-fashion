@@ -59,6 +59,9 @@ module.exports.scrape = async (url='https://www.dedicatedbrand.com/en/loadfilter
         temp['brand']='Dedicated Brand'
         temp['name']=element.name;
         temp['price']=parseInt(element.price.price);
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        temp['released_Date']=date;
         filter.push(temp)
 
       })

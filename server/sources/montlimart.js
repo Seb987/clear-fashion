@@ -20,8 +20,10 @@ const parse = data => {
           .find('.price')
           .text()
       );
+      var today = new Date();
+      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 
-      return {"brand":"Montlimart",name, price};
+      return {"brand":"Montlimart",name, price, "released_Date":date};
     })
     .get();
 };

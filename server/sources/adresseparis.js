@@ -18,8 +18,10 @@ const parse = data => {
           .find('.product-price')
           .text()
       );
+      var today = new Date();
+      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 
-      return {"brand":"Adresse Paris",name, price};
+      return {"brand":"Adresse Paris",name, price, "released_Date":date};
     })
     .get();
 };
