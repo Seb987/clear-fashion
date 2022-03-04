@@ -1,7 +1,8 @@
 /* eslint-disable no-console, no-process-exit */
 const dedicatedbrand = require('./sources/dedicatedbrand.js');
 const montlimart = require('./sources/montlimart.js');
-const adresseparis= require('./sources/adresseparis.js');
+const adresseparis = require('./sources/adresseparis.js');
+const akho = require('./sources/akho.js');
 const fs = require('fs');
 
 async function sandbox (eshop) {
@@ -10,17 +11,19 @@ async function sandbox (eshop) {
     const products_dedicatedBrand = await dedicatedbrand.scrape(eshop);
     const products_montlimart = await montlimart.scrape(eshop);
     const products_adresseParis = await adresseparis.scrape(eshop);
+    const products_akho = await akho.scrape(eshop);
 
     //Merge all products into one array
-    const temp = products_dedicatedBrand.concat(products_montlimart);
-    const products_new = temp.concat(products_adresseParis)
+    let temp = products_dedicatedBrand.concat(products_montlimart);
+    temp = temp.concat(products_adresseParis)
+    const products_new = temp.concat(products_akho)
 
     //console.log(products_new);
     //console.log('done');
 
 
     const products_file= require('./products.json');
-    
+    //Loop that checks if a product is already in the file, if not add the product to the list
     for(let i=0; i<products_new.length;i++){
       let product_not_new = false;
       for(let j=0; j < products_file.length; j++){
@@ -32,8 +35,6 @@ async function sandbox (eshop) {
         products_file.push(products_new[i]);
       }
     }
-    //console.log(products_file)
-
     try {
         fs.writeFileSync('products.json', JSON.stringify(products_file));
         console.log("JSON data is saved.");
