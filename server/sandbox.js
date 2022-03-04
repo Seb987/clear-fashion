@@ -3,6 +3,7 @@ const dedicatedbrand = require('./sources/dedicatedbrand.js');
 const montlimart = require('./sources/montlimart.js');
 const adresseparis = require('./sources/adresseparis.js');
 const akho = require('./sources/akho.js');
+const splice = require('./sources/splice.js');
 const fs = require('fs');
 
 async function sandbox (eshop) {
@@ -12,11 +13,13 @@ async function sandbox (eshop) {
     const products_montlimart = await montlimart.scrape(eshop);
     const products_adresseParis = await adresseparis.scrape(eshop);
     const products_akho = await akho.scrape(eshop);
+    const products_splice = await splice.scrape(eshop);
 
     //Merge all products into one array
     let temp = products_dedicatedBrand.concat(products_montlimart);
     temp = temp.concat(products_adresseParis)
-    const products_new = temp.concat(products_akho)
+    temp = temp.concat(products_akho)
+    const products_new = temp.concat(products_splice)
 
     //console.log(products_new);
     //console.log('done');
