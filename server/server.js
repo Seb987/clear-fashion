@@ -10,15 +10,15 @@ async function start() {
 
   const collection = db.collection('products');
 
-  //Insert_Products(collection)
+  //insert_Products(collection)
   //find_Brand(collection, 'Adresse Paris');
   //find_filter_price(collection, 0 , 50);
   //sorted_by_price(collection)
   //sorted_by_date(collection);
-  products_recently_scraped(collection)
-  /*
-  const products = await collection.find().toArray();
-  console.log(products);*/
+  //products_recently_scraped(collection)
+  
+  //const products = await collection.find().toArray();
+  //console.log(products);
 }
 start()
 
@@ -26,7 +26,8 @@ async function insert_Products(collection){
   
   //Insert the products in the database
   const products= require('./products.json');
-  const result = collection.insertMany(products);  
+  collection.drop(); //Drop the current collection to refresh the new products 
+  collection.insertMany(products);  
 }
 
 //Displays only the products of a certain brand
