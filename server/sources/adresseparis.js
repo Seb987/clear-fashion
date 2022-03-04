@@ -21,7 +21,7 @@ const parse = data => {
       var today = new Date();
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 
-      return {"brand":"Adresse Paris",name, price, "released_Date":date};
+      return {"brand":"Adresse Paris",name, price, "scrape_date":date};
     })
     .get();
 };
