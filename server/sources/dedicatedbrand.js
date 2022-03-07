@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const {'v5': uuidv5} = require('uuid');
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -56,12 +57,16 @@ module.exports.scrape = async (url='https://www.dedicatedbrand.com/en/loadfilter
       //We decide to only display the name and the price of the product
       filteredProducts.forEach(element => {
         temp={};
+        const link="https://www.dedicatedbrand.com/en/men/all-men/"+element.uri;
+        temp['_uid']=uuidv5(link, uuidv5.URL)
+        temp['link']=link
         temp['brand']='Dedicated Brand'
         temp['name']=element.name;
         temp['price']=parseInt(element.price.price);
         var today = new Date();
         var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         temp['scrape_date']=date;
+        temp['photo']=element.image[0]
         filter.push(temp)
 
       })
