@@ -1,6 +1,6 @@
 
 const { MongoClient } = require('mongodb');
-const MONGODB_URI = "mongodb+srv://seb:IMQdE9q5owHiV1CF@products.y0vdk.mongodb.net/Products?retryWrites=true&w=majority";
+const MONGODB_URI = "mongodb+srv://seb:IMQdE9q5owHiV1CF@products.y0vdk.mongodb.net/products?retryWrites=true&w=majority";
 const MONGODB_DB_NAME = 'products';
 
 async function start() {
@@ -28,6 +28,7 @@ async function insert_Products(collection){
   const products= require('./products.json');
   collection.drop(); //Drop the current collection to refresh the new products 
   collection.insertMany(products);  
+  console.log("Produits ajoutés")
 }
 
 //Displays only the products of a certain brand
