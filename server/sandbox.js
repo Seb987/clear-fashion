@@ -10,6 +10,7 @@ async function sandbox (eshop) {
   try {
     //console.log(`🕵️‍♀️  browsing ${eshop} source`);
     const products_dedicatedBrand = await dedicatedbrand.scrape(eshop);
+    /*
     const products_montlimart = await montlimart.scrape(eshop);
     const products_adresseParis = await adresseparis.scrape(eshop);
     const products_akho = await akho.scrape(eshop);
@@ -19,14 +20,14 @@ async function sandbox (eshop) {
     let temp = products_dedicatedBrand.concat(products_montlimart);
     temp = temp.concat(products_adresseParis)
     temp = temp.concat(products_akho)
-    const products_new = temp.concat(products_splice)
+    const products_new = temp.concat(products_splice)*/
 
-    //console.log(products_new);
+    console.log(products_dedicatedBrand);
     //console.log('done');
 
-
+/*
     const products_file= require('./products.json');
-    //Loop that checks if a product is already in the file, if not add the product to the list
+    
     for(let i=0; i<products_new.length;i++){
       let product_not_new = false;
       for(let j=0; j < products_file.length; j++){
@@ -43,7 +44,7 @@ async function sandbox (eshop) {
         console.log("JSON data is saved.");
     } catch (err) {
       console.error(err);
-    }
+    }*/
     process.exit(0);
   } catch (e) {
     console.error(e);
