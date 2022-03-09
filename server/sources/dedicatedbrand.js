@@ -58,7 +58,7 @@ module.exports.scrape = async (url='https://www.dedicatedbrand.com/en/loadfilter
       filteredProducts.forEach(element => {
         temp={};
         const link="https://www.dedicatedbrand.com/en/men/all-men/"+element.uri;
-        temp['_uid']=uuidv5(link, uuidv5.URL)
+        temp['_id']=uuidv5(link, uuidv5.URL)
         temp['link']=link
         temp['brand']='Dedicated Brand'
         temp['name']=element.name;
