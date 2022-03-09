@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const {'v5': uuidv5} = require('uuid');
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -8,8 +9,14 @@ const cheerio = require('cheerio');
 const parse = data => {
   const $ = cheerio.load(data);
 
-  return $('.product-container .right-block')
+  return $('.product-container')
     .map((i, element) => {
+      const link = $(element)
+      .find('.product-name')
+      .attr('href');
+      if (link == undefined){
+        return
+      }
       const name = $(element)
         .find('.product-name')
         .attr('title');
@@ -19,9 +26,12 @@ const parse = data => {
           .text()
       );
       var today = new Date();
-      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-
-      return {"brand":"Adresse Paris",name, price, "scrape_date":date};
+      var scrape_date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      const image =$(element)
+      .find('.replace-2x')
+      .attr('data-original');  
+      const _id=uuidv5(link, uuidv5.URL)
+      return {_id, link,"brand":"Adresse Paris",name, price, scrape_date, image};
     })
     .get();
 };
@@ -38,8 +48,21 @@ const parse = data => {
       
       if (response.ok) {
         const body = await response.text();
-        
-        return parse(body);
+        let returnArray=[]
+        for (let i =1; i <= 2; i++){
+            const temp_url = url+'&p='+i.toString()
+            try{
+                const temp_response = await fetch (temp_url)
+                if(temp_response.ok){
+                    const temp_body = await temp_response.text()
+                    returnArray = returnArray.concat(parse(temp_body))
+                }
+            } catch (error) {
+                console.error(error);
+                return null;
+              }
+        }
+        return returnArray;
       }
   
       console.error(response);
