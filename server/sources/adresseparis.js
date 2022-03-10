@@ -27,11 +27,11 @@ const parse = data => {
       );
       var today = new Date();
       var scrape_date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-      const image =$(element)
+      const photo =$(element)
       .find('.replace-2x')
       .attr('data-original');  
       const _id=uuidv5(link, uuidv5.URL)
-      return {_id, link,"brand":"Adresse Paris",name, price, scrape_date, image};
+      return {_id, link,"brand":"Adresse Paris",name, price, scrape_date, photo};
     })
     .get();
 };

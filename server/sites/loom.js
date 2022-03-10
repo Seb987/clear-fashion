@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const {'v5': uuidv5} = require('uuid');
+const { ObjectId } = require('mongodb');
 
 /**
  * Parse webpage restaurant
@@ -43,7 +44,7 @@ const parse = data => {
  * @param  {[type]}  url
  * @return {Array|null}
  */
-module.exports.scrape = async url => {
+module.exports.scrape = async (url='https://www.loom.fr/collections/hauts-homme') => {
   try {
     const response = await fetch(url);
 
