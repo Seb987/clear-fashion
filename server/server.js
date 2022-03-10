@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
-const MONGODB_URI = "mongodb+srv://seb:IMQdE9q5owHiV1CF@products.y0vdk.mongodb.net/products?retryWrites=true&w=majority";
+const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB_NAME = 'clear-fashion';
 const MONGODB_DB_COLLECTION = 'products';
 
