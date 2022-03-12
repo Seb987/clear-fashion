@@ -16,7 +16,8 @@ const parse = data => {
       const link = `https://www.loom.fr${$(element)
         .find('.product-title a')
         .attr('href')}`;
-
+        var today = new Date();
+        var scrape_date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
       return {
         link,
         'brand': 'loom',
@@ -33,6 +34,7 @@ const parse = data => {
         'photo': $(element)
           .find('noscript img.product_card__image')
           .attr('src'),
+        scrape_date,
         '_id': uuidv5(link, uuidv5.URL)
       };
     })
