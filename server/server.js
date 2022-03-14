@@ -71,11 +71,11 @@ const getDB = module.exports.getDB = async () => {
  * @param  {Array}  query
  * @return {Array}
  */
- module.exports.find = async query => {
+ module.exports.find = async (query, limit) => {
   try {
     const db = await getDB();
     const collection = db.collection(MONGODB_DB_COLLECTION);
-    const result = await collection.find(query).toArray();
+    const result = await collection.find(query).sort({price:1}).limit(limit).toArray();
 
     return result;
   } catch (error) {

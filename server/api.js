@@ -28,22 +28,23 @@ app.get('/products/:id', async(request, response) => {
   response.send(await db.find({"_id":request.params.id}));
 });*/
 app.get('/products/search?', async(request, response) => {
-  /*let query ={};
-  if(request.query.brand == undefined){
-    query={price:{$lt:request.query.price}}
+  
+  let limit = 12
+  let query = request.query;
+  if('brand' in query){
+    query['brand']={$eq:request.query.brand}
   }
-  else if(request.query.price == undefined){
-    query={brand:request.query.brand}
+  if('price' in query){
+    query['price']={$lt:parseInt(request.query.price)}
   }
-  else {
-    query=}
-  }*/
-  //,{limit:request.query.limit}
-  console.log(request.query.brand)
-  console.log(request.query.price)
-  console.log(request.query.limit)
-  const result = await db.find({brand:request.query.brand, price:{$lt:request.query.price}});
-  response.send({"limit":request.query.limit,"total":result.length,"results":result});
+  if('limit' in query){
+    limit=parseInt(request.query.limit)
+    delete query['limit']
+  }
+  //{limit:request.query.limit}
+  //const result = await db.find({'brand': {$eq:request.query.brand},'price':{$lt:parseInt(request.query.price)}});
+  const result = await db.find(query, limit)
+  response.send({"limit":limit,"total":result.length,"results":result});
 });
 
 /*
