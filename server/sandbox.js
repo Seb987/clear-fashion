@@ -36,7 +36,8 @@ async function sandbox (eshop) {
 
     */
     //const result = await db.insert(products_loom);
-    const loomOnly = await db.find({'brand':'loom','price':{$lt:30}});
+    const data= await db.getDB()
+    const loomOnly = await db.find({'brand':'loom','price':{$lt:30}},data);
     console.log(loomOnly)
     db.close();
 
