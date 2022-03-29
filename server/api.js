@@ -24,11 +24,15 @@ app.use(helmet());
 
 app.options('*', cors());
 
-app.get('/', (request, response) => {
+app.get('/', async(request, response) => {
+  client = await clientPromise;
+  collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
   response.send({'ack': true});
 });
+
 app.get('/products/search?', async(request, response) => {
-  
+  client = await clientPromise;
+  collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
   let limit = 12
   let query = request.query;
   if('brand' in query){
@@ -46,14 +50,17 @@ app.get('/products/search?', async(request, response) => {
 });
 
 app.get('/products/:id', async(request, response) => {
+  client = await clientPromise;
+  collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
   response.send(await db.find({"_id":request.params.id},collection));
 });
 
 
 app.listen(PORT, async() => {
+  /*
   client = await clientPromise;
   collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
-  console.log('Connected to '+MONGODB_DB_NAME);
+  console.log('Connected to '+MONGODB_DB_NAME);*/
   //data = await db.getDB();
 });
 
