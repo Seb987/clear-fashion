@@ -7,9 +7,9 @@ const bodyParser = require('body-parser');
 const { query } = require('express');
 const clientPromise = require('./mongodb-client');
 var collection, client;
-let data;
 const MONGODB_DB_NAME = 'clear-fashion';
 const MONGODB_DB_COLLECTION = 'products';
+const { calculateLimitAndOffset, paginate } = require('paginate-info');
 
 const PORT = 8092;
 
@@ -25,28 +25,37 @@ app.use(helmet());
 app.options('*', cors());
 
 app.get('/', async(request, response) => {
-  client = await clientPromise;
-  collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
   response.send({'ack': true});
 });
 
-app.get('/products/search?', async(request, response) => {
+app.get('/products/search', async(request, response) => {
   client = await clientPromise;
   collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
-  let limit = 12
+  
   let query = request.query;
+  let size = 12;
+  let page = 1
+
+  if('size' in query){
+    size=parseInt(query.size)
+    delete query['size']
+  }
+  if('page' in query){
+    page=parseInt(query.page)
+    delete query['page']
+  }
   if('brand' in query){
-    query['brand']={$eq:request.query.brand}
+    query['brand']={$eq:query.brand}
   }
   if('price' in query){
-    query['price']={$lt:parseInt(request.query.price)}
+    query['price']={$lt:parseInt(query.price)}
   }
-  if('limit' in query){
-    limit=parseInt(request.query.limit)
-    delete query['limit']
-  }
-  const result = await db.find(query, collection, limit)
-  response.send({"limit":limit,"total":result.length,"results":result});
+
+  const { limit, offset } = calculateLimitAndOffset(page, size);
+  const count = await db.count(query, collection);
+
+  const result = await db.find(query, collection, limit, offset)
+  response.send({"success":"true","data":{"result":result,"meta": paginate(page, count, result, limit)}});
 });
 
 app.get('/products/:id', async(request, response) => {
@@ -56,13 +65,7 @@ app.get('/products/:id', async(request, response) => {
 });
 
 
-app.listen(PORT, async() => {
-  /*
-  client = await clientPromise;
-  collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
-  console.log('Connected to '+MONGODB_DB_NAME);*/
-  //data = await db.getDB();
-});
+app.listen(PORT);
 
 console.log(`📡 Running on port ${PORT}`);
 module.exports = app;
