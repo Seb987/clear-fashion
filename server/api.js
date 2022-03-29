@@ -4,8 +4,13 @@ const req = require('express/lib/request');
 const helmet = require('helmet');
 const db = require('./server.js')
 const bodyParser = require('body-parser');
+//const data = require('./mongodb-connect');
 const { query } = require('express');
+const clientPromise = require('./mongodb-client');
+var collection, client;
 let data;
+const MONGODB_DB_NAME = 'clear-fashion';
+const MONGODB_DB_COLLECTION = 'products';
 
 const PORT = 8092;
 
@@ -37,24 +42,20 @@ app.get('/products/search?', async(request, response) => {
     limit=parseInt(request.query.limit)
     delete query['limit']
   }
-  const result = await db.find(query, data, limit)
+  const result = await db.find(query, collection, limit)
   response.send({"limit":limit,"total":result.length,"results":result});
 });
 
 app.get('/products/:id', async(request, response) => {
-  response.send(await db.find({"_id":request.params.id},data));
+  response.send(await db.find({"_id":request.params.id},collection));
 });
-
-/*
-app.get('/products/search?limit=:limit/?brand=:brand/?price=:price', async(request, response) => {
-  console.log("search")
-  response.send(await db.find({'brand': {$eq:request.params.brand},'price':{$lt:request.params.price}}).limit(request.params.limit));
-});*/
-
 
 
 app.listen(PORT, async() => {
-  data = await db.getDB();
+  client = await clientPromise;
+  collection = client.db(MONGODB_DB_NAME).collection(MONGODB_DB_COLLECTION)
+  console.log('Connected to '+MONGODB_DB_NAME);
+  //data = await db.getDB();
 });
 
 console.log(`📡 Running on port ${PORT}`);
