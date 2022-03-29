@@ -4,7 +4,6 @@ const req = require('express/lib/request');
 const helmet = require('helmet');
 const db = require('./server.js')
 const bodyParser = require('body-parser');
-//const data = require('./mongodb-connect');
 const { query } = require('express');
 const clientPromise = require('./mongodb-client');
 var collection, client;
@@ -59,3 +58,4 @@ app.listen(PORT, async() => {
 });
 
 console.log(`📡 Running on port ${PORT}`);
+module.exports = app;
