@@ -55,7 +55,7 @@ app.get('/products/search', async(request, response) => {
   const count = await db.count(query, collection);
 
   const result = await db.find(query, collection, limit, offset)
-  response.send({"success":"true","data":{"result":result,"meta": paginate(page, count, result, limit)}});
+  response.send({"success":true,"data":{"result":result,"meta": paginate(page, count, result, limit)}});
 });
 
 app.get('/products/:id', async(request, response) => {
