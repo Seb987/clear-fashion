@@ -34,7 +34,28 @@ app.get('/products/search', async(request, response) => {
   
   let query = request.query;
   let size = 12;
-  let page = 1
+  let page = 1;
+  let sort = {};
+
+  if('sort' in query){
+    switch(query.sort){
+      case 'price-asc':
+        sort={price:1}
+        break;
+      case 'price-desc':
+        sort={price:-1}
+        break;
+      case 'date-asc':
+        sort={scrape_date:1}
+        break;
+      case 'date-desc':
+        sort={scrape_date:-1}
+        break;
+      default:
+        break;
+    }
+    delete query['sort']
+  }
 
   if('size' in query){
     size=parseInt(query.size)
@@ -54,7 +75,7 @@ app.get('/products/search', async(request, response) => {
   const { limit, offset } = calculateLimitAndOffset(page, size);
   const count = await db.count(query, collection);
 
-  const result = await db.find(query, collection, limit, offset)
+  const result = await db.find(query, collection, limit, offset, sort)
   response.send({"success":true,"data":{"result":result,"meta": paginate(page, count, result, limit)}});
 });
 
