@@ -49,8 +49,11 @@ const setCurrentProducts = ({result, meta}) => {
 const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+      `https://clear-fashion-seb987.vercel.app/products/search?page=${page}&size=${size}`
     );
+    /*const response = await fetch(
+      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+    );*/
     const body = await response.json();
 
     if (body.success !== true) {
@@ -73,7 +76,26 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
     if(brand !="all"){
       string=`&brand=${brand}`;
     }
-    const response = await fetch(`https://clear-fashion-api.vercel.app?page=${page}&size=${size}`+string);
+    switch(selectSort.value){ //sort the result accordingly to the label
+      case "price-asc":
+        string += "&sort=price-asc";
+        break;
+      case "price-desc":
+        string += "&sort=price-desc";
+        break;
+      case "date-desc":
+        string += "&sort=date-asc";
+        break;
+      case "date-asc":
+        string += "&sort=date-desc";
+        break;
+      default:
+        break;
+    }
+    if(reasonablePriceIsOn){ //Filter by recently released if the button is on
+      string+="&price=50"
+    }
+    const response = await fetch(`https://clear-fashion-seb987.vercel.app/products/search?page=${page}&size=${size}`+string);
     const body = await response.json();
 
     if (body.success !== true) {
@@ -83,38 +105,12 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
     if(releasedIsOn){ //Filter by reasonable price if the button is on
       let filteredProducts=[]
       body.data.result.forEach(element =>{
-        if(isNew(element.released)){
+        if(isNew(element.scrape_date)){
           filteredProducts.push(element)
         }
       })
       body.data.result=filteredProducts
     }
-    if(reasonablePriceIsOn){ //Filter by recently released if the button is on
-      let filteredProducts=[]
-      body.data.result.forEach(element =>{
-        if(isReasonablePrice(element.price)){
-          filteredProducts.push(element)
-        }
-      })
-      body.data.result=filteredProducts
-    }
-    
-  switch(selectSort.value){ //sort the result accordingly to the label
-    case "price-asc":
-      body.data.result=body.data.result.sort(function (a, b) { return a.price - b.price;});
-      break;
-    case "price-desc":
-      body.data.result=body.data.result.sort(function (a, b) { return b.price - a.price;});
-      break;
-    case "date-desc":
-      body.data.result=body.data.result.sort(function (a, b) { return new Date(b.released) - new Date(a.released);});
-      break;
-    case "date-asc":
-      body.data.result=body.data.result.sort(function (a, b) { return new Date(a.released) - new Date(b.released);});
-      break;
-    default:
-      break;
-  }
     return body.data;
   } catch (error) {
     console.error(error);
@@ -136,14 +132,6 @@ const isNew = (released) => {
   return false;
 }
 
-/**
- *  checks whteter or not a price is reasonable (less than 50euros)
- * @param {number} price 
- * @returns {boolean}
- */
-const isReasonablePrice = (price) => {
-  return price < 50;
-}
 
 /**
  * fetch all the data in the API and returns the number of new products it can count
@@ -151,19 +139,11 @@ const isReasonablePrice = (price) => {
  */
 const countNewProducts = async() => {
   try {
-    const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=1&size=${spanNbProducts.innerHTML}`
-    );
-    const body = await response.json();
-
-    if (body.success !== true) {
-      console.error(body);
-      return {currentProducts, currentPagination};
-    }
+    const data = await fetchProductsByBrand(1, spanNbProducts.innerHTML, selectBrand.value);
     let nbNewProducts=0;
-    const results= body.data.result;
+    const results= data.result;
     for(let i =0; i<results.length; i++){//Check for each product if the released date is less than 2 weeks
-      if(isNew(results[i].released)){
+      if(isNew(results[i].scrape_date)){
         nbNewProducts++;
       }
     }
@@ -181,16 +161,8 @@ const countNewProducts = async() => {
  */
 const priceValue = async(percentile) => {
   try {
-    const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=1&size=${spanNbProducts.innerHTML}`
-    );
-    const body = await response.json();
-
-    if (body.success !== true) {
-      console.error(body);
-      return {currentProducts, currentPagination};
-    }
-    const sortedArr=sortedByPrice(body.data.result);//Sort the array by price  in order descending
+    const data = await fetchProductsByBrand(1, spanNbProducts.innerHTML, selectBrand.value)
+    const sortedArr=sortedByPrice(data.result);//Sort the array by price  in order descending
     const percentile_index= parseInt(sortedArr.length*percentile/100); //Calculate the percentile index depending on the array length
     const priceVal = sortedArr[percentile_index]; 
     return priceVal;
@@ -207,16 +179,8 @@ const priceValue = async(percentile) => {
  */
  const lastReleased = async() => {
   try {
-    const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=1&size=${spanNbProducts.innerHTML}`
-    );
-    const body = await response.json();
-
-    if (body.success !== true) {
-      console.error(body);
-      return {currentProducts, currentPagination};
-    }
-    const sortedArr=sortedByDate(body.data.result); //Sort the array by date from most recent to oldest
+    const data = await fetchProductsByBrand(1, spanNbProducts.innerHTML, selectBrand.value)
+    const sortedArr=sortedByDate(data.result); //Sort the array by date from most recent to oldest
     const lastReleased = sortedArr[0]; //returns the first element of the array since it's sorted from recent to oldest
     return lastReleased;
   } catch (error) {
@@ -246,7 +210,7 @@ const sortedByPrice =(arr) => {
  const sortedByDate =(arr) => {
   let temp_arr =[]
   for(let i =0; i< arr.length; i++){
-    temp_arr.push(arr[i].released);
+    temp_arr.push(arr[i].scrape_date);
   }
   return temp_arr.sort(function(a, b){return new Date(b)-new Date(a)});
 }
@@ -262,8 +226,8 @@ const renderProducts = products => {
     .map(product => {
       return `
       <div class="product" id=${product.uuid}>
-        <input type="checkbox">
-        <span>${product.released}</span>
+        <!--<input type="checkbox">-->
+        <span>${product.scrape_date}</span>
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}</span>
@@ -383,7 +347,7 @@ const togglePrice  = async() =>  {
   const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
-} 
+} /*
 const toggleFavorite  = async() =>  {
   if(favoriteIsOn){
     btnFav.style.background='';
@@ -395,7 +359,7 @@ const toggleFavorite  = async() =>  {
   const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
-} 
+} */
 
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
