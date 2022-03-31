@@ -235,7 +235,7 @@ const renderProducts = products => {
   .map(product => {
     return `
     <tr>
-      <td><a href="${product.link}" target="_blank"><img src=${product.photo} width="400" height="450"></a></td>
+      <td><a href="${product.link}" target="_blank"><img src="${product.photo}" width="400" height="450"></a></td>
       <td>${product.name}</td>
       <td>${product.price} €</td>
       <td>${product.brand}</td>
