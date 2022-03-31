@@ -16,7 +16,7 @@ async function sandbox (eshop) {
     //const products_adresseParis = await adresseparis.scrape(eshop);
     //const products_akho = await akho.scrape(eshop);
     //const products_splice = await splice.scrape(eshop);
-    const products_loom = await loom.scrape(eshop);
+    //const products_loom = await loom.scrape(eshop);
 /*
     //Merge all products into one array
     let temp = products_dedicatedBrand.concat(products_montlimart);
@@ -24,7 +24,7 @@ async function sandbox (eshop) {
     temp = temp.concat(products_akho)
     const products_new = temp.concat(products_splice)*/
 
-    //console.log(products_montlimart);
+    //console.log(products_akho);
     //console.log('done');
 
     //const loomOnly = await db.find({'brand': {$eq:'Montlimart'},'price':{$lt:100}});
@@ -35,32 +35,13 @@ async function sandbox (eshop) {
     const result3 = await db.insert(products_adresseParis);
 
     */
-    //const result = await db.insert(products_loom);
+    //const result = await db.insert(products_akho);
+    /*
     const data= await db.getDB()
     const loomOnly = await db.find({'brand':'loom','price':{$lt:30}},data);
     console.log(loomOnly)
-    db.close();
+    db.close();*/
 
-/*
-    const products_file= require('./products.json');
-    
-    for(let i=0; i<products_new.length;i++){
-      let product_not_new = false;
-      for(let j=0; j < products_file.length; j++){
-        if(products_file[j].name == products_new[i].name){
-          product_not_new=true;
-        }
-      }
-      if(!product_not_new){
-        products_file.push(products_new[i]);
-      }
-    }/*
-    try {
-        fs.writeFileSync('products.json', JSON.stringify(products_file));
-        console.log("JSON data is saved.");
-    } catch (err) {
-      console.error(err);
-    }*/
     process.exit(0);
   } catch (e) {
     console.error(e);

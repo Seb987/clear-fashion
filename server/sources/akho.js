@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const {'v5': uuidv5} = require('uuid');
+
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -8,13 +10,20 @@ const cheerio = require('cheerio');
 const parse = data => {
   const $ = cheerio.load(data);
 
-  return $('.card-information')
+  return $('.card-wrapper')
     .map((i, element) => {
-        const name = $(element)
-        .find('.card-information__text')
-        .text()
-        .trim()
-        .replace(/\s/g, ' ');
+      const link = "https://www.akhoparis.com"+$(element)
+        .find('.card__inner a')
+        .attr('href')
+      if (link == undefined){
+        return
+      }  
+      const _id=uuidv5(link, uuidv5.URL)
+      const name = $(element)
+      .find('.card-information .card-information__text')
+      .text()
+      .trim()
+      .replace(/\s/g, ' ');
       const price = parseInt(
         $(element)
           .find('.price-item')
@@ -23,7 +32,10 @@ const parse = data => {
       var today = new Date();
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 
-      return {"brand":"Akho",name, price, "scrape_date":date};
+      const photo =$(element)
+      .find('.media img')
+      .attr('srcset'); 
+      return {_id, link,"brand":"Akho",name, price, "scrape_date":date, photo};
     })
     .get();
 };
