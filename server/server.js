@@ -51,8 +51,8 @@ const getDB = module.exports.getDB = async () => {
  */
  module.exports.insert = async products => {
   try {
-    const db = await getDB();
-    const collection = db.collection(MONGODB_DB_COLLECTION);
+    //const db = await getDB();
+    const collection = await getDB();
     // More details
     // https://docs.mongodb.com/manual/reference/method/db.collection.insertMany/#insert-several-document-specifying-an-id-field
     const result = await collection.insertMany(products, {'ordered': false});
