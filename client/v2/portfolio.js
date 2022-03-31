@@ -222,19 +222,29 @@ const sortedByPrice =(arr) => {
 const renderProducts = products => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
-  const template = products
-    .map(product => {
-      return `
-      <div class="product" id=${product.uuid}>
-        <!--<input type="checkbox">-->
-        <span>${product.scrape_date}</span>
-        <span>${product.brand}</span>
-        <a href="${product.link}" target="_blank">${product.name}</a>
-        <span>${product.price}</span>
-      </div>
-    `;
-    })
+  let template = `<table class="w3-table"> 
+                  <tr> 
+                    <th>Photo</th> 
+                    <th>Name</th> 
+                    <th>Price</th>  
+                    <th>Brand</th>
+                    <th>Date</th>
+                  </tr>
+                  `
+  template = template+products
+  .map(product => {
+    return `
+    <tr>
+      <td><a href="${product.link}" target="_blank"><img src=${product.photo} width="400" height="450"></a></td>
+      <td>${product.name}</td>
+      <td>${product.price} €</td>
+      <td>${product.brand}</td>
+      <td>${product.scrape_date}</td>
+    </tr>
+  `;
+  })
     .join('');
+  template=template+"</table>"
 
   div.innerHTML = template;
   fragment.appendChild(div);

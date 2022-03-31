@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(223, 223, 223);
+    background-color: rgb(67, 144, 150);
     color : rgb(255, 255, 255); 
 }
   
@@ -15,7 +15,6 @@ h2 {
 
 #options{
     overflow: hidden;
-    background-color: rgb(241, 47, 47);
 }
 
 #options div {
@@ -31,7 +30,6 @@ h2 {
 }
  
 #indicators div {
-    background-color: rgb(240, 74, 74);
     display: block;
     color: #dddddd;
     padding: 15px 20px;
@@ -40,8 +38,23 @@ h2 {
   }
 
 #products div{
-    background-color: rgb(255, 113, 113);
     display: block;
     padding: 5px;
     font-size: 15px;
 }
+
+.product {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: auto;
+    font-family: arial;
+  }
+
+
+table{
+    border-spacing: 30px;
+}
+
+th, td {
+    padding: 10px;
+  }
