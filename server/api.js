@@ -6,10 +6,11 @@ const db = require('./server.js')
 const bodyParser = require('body-parser');
 const { query } = require('express');
 const clientPromise = require('./mongodb-client');
-var collection, client;
 const MONGODB_DB_NAME = 'clear-fashion';
 const MONGODB_DB_COLLECTION = 'products';
 const { calculateLimitAndOffset, paginate } = require('paginate-info');
+
+var collection, client;
 
 const PORT = 8092;
 
@@ -18,7 +19,6 @@ const app = express();
 module.exports = app;
 
 app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 

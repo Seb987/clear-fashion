@@ -3,19 +3,16 @@ const dedicatedbrand = require('./sources/dedicatedbrand.js');
 const montlimart = require('./sources/montlimart.js');
 const adresseparis = require('./sources/adresseparis.js');
 const akho = require('./sources/akho.js');
-const splice = require('./sources/splice.js');
 const loom = require('./sites/loom.js');
 const db = require('./server.js')
 const fs = require('fs');
 
 async function sandbox (eshop) {
   try {
-    //console.log(`🕵️‍♀️  browsing ${eshop} source`);
     //const products_dedicatedBrand = await dedicatedbrand.scrape(eshop);
     //const products_montlimart = await montlimart.scrape(eshop);
     //const products_adresseParis = await adresseparis.scrape(eshop);
     const products_akho = await akho.scrape(eshop);
-    //const products_splice = await splice.scrape(eshop);
     //const products_loom = await loom.scrape(eshop);
 
     console.log(products_akho);

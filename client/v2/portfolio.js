@@ -8,7 +8,6 @@ let currentPagination = {};
 //Bool for toggle button to know if the button is clicked or not
 let releasedIsOn=false;
 let reasonablePriceIsOn = false;
-let favoriteIsOn = false;
 
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
@@ -18,14 +17,12 @@ const spanNbProducts = document.querySelector('#nbProducts');
 const selectBrand = document.querySelector('#brand-select');
 const btnRecent = document.querySelector('#recent_products');
 const btnPrice = document.querySelector('#reasonable_price');
-const btnFav = document.querySelector('#fav_products');
 const selectSort = document.querySelector('#sort-select');
 const spanNbNewProducts = document.querySelector('#nbNewProducts');
 const spanPriceValueP50 = document.querySelector('#valueP50');
 const spanPriceValueP90 = document.querySelector('#valueP90');
 const spanPriceValueP95 = document.querySelector('#valueP95');
 const spanLastReleased = document.querySelector('#lastReleasedDate');
-const checkboxesAddToFav = document.querySelectorAll('input[type=checkbox]');
 
 
 /**
@@ -44,33 +41,10 @@ const setCurrentProducts = ({result, meta}) => {
  * Fetch products from api
  * @param  {Number}  [page=1] - current page to fetch
  * @param  {Number}  [size=12] - size of the page
+ * @param  {String}  - brand name
  * @return {Object}
  */
-const fetchProducts = async (page = 1, size = 12) => {
-  try {
-    const response = await fetch(
-      `https://clear-fashion-seb987.vercel.app/products/search?page=${page}&size=${size}`
-    );
-    /*const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
-    );*/
-    const body = await response.json();
-
-    if (body.success !== true) {
-      console.error(body);
-      return {currentProducts, currentPagination};
-    }
-
-    return body.data;
-  } catch (error) {
-    console.error(error);
-    return {currentProducts, currentPagination};
-  }
-};
-/**
- * Fetch only the products corresponding to the brand we need
- */
-const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
+const fetchProducts = async (page = 1, size = 12, brand) => {
   try {
     let string="";
     if(brand !="all"){
@@ -92,7 +66,7 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
       default:
         break;
     }
-    if(reasonablePriceIsOn){ //Filter by recently released if the button is on
+    if(reasonablePriceIsOn){ //Filter by reasonable price if the button is on
       string+="&price=50"
     }
     const response = await fetch(`https://clear-fashion-seb987.vercel.app/products/search?page=${page}&size=${size}`+string);
@@ -102,7 +76,7 @@ const fetchProductsByBrand = async (page = 1, size = 12, brand) => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-    if(releasedIsOn){ //Filter by reasonable price if the button is on
+    if(releasedIsOn){ //Filter by recently released if the button is on
       let filteredProducts=[]
       body.data.result.forEach(element =>{
         if(isNew(element.scrape_date)){
@@ -139,7 +113,7 @@ const isNew = (released) => {
  */
 const countNewProducts = async() => {
   try {
-    const data = await fetchProductsByBrand(1, spanNbProducts.innerHTML, selectBrand.value);
+    const data = await fetchProducts(1, spanNbProducts.innerHTML, selectBrand.value);
     let nbNewProducts=0;
     const results= data.result;
     for(let i =0; i<results.length; i++){//Check for each product if the released date is less than 2 weeks
@@ -161,7 +135,7 @@ const countNewProducts = async() => {
  */
 const priceValue = async(percentile) => {
   try {
-    const data = await fetchProductsByBrand(1, spanNbProducts.innerHTML, selectBrand.value)
+    const data = await fetchProducts(1, spanNbProducts.innerHTML, selectBrand.value)
     const sortedArr=sortedByPrice(data.result);//Sort the array by price  in order descending
     const percentile_index= parseInt(sortedArr.length*percentile/100); //Calculate the percentile index depending on the array length
     const priceVal = sortedArr[percentile_index]; 
@@ -179,7 +153,7 @@ const priceValue = async(percentile) => {
  */
  const lastReleased = async() => {
   try {
-    const data = await fetchProductsByBrand(1, spanNbProducts.innerHTML, selectBrand.value)
+    const data = await fetchProducts(1, spanNbProducts.innerHTML, selectBrand.value)
     const sortedArr=sortedByDate(data.result); //Sort the array by date from most recent to oldest
     const lastReleased = sortedArr[0]; //returns the first element of the array since it's sorted from recent to oldest
     return lastReleased;
@@ -222,7 +196,7 @@ const sortedByPrice =(arr) => {
 const renderProducts = products => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
-  let template = `<table class="w3-table"> 
+  let template = `<table> 
                   <tr> 
                     <th>Photo</th> 
                     <th>Name</th> 
@@ -243,8 +217,7 @@ const renderProducts = products => {
     </tr>
   `;
   })
-    .join('');
-  template=template+"</table>"
+  .join('')+"</table>";
 
   div.innerHTML = template;
   fragment.appendChild(div);
@@ -289,52 +262,11 @@ const render = (products, pagination) => {
   renderIndicators(pagination);
 };
 
-/**
- * Declaration of all Listeners
- */
-
-/**
- * Select the number of products to display
- */
-
-selectShow.addEventListener('change', async(event) => {
-  const products = await fetchProductsByBrand(1, parseInt(event.target.value), selectBrand.value);
-
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
-});
-
-/**
- * Select the page to browse to 
- */
-selectPage.addEventListener('change', async(event) => {
-  const products = await fetchProductsByBrand(parseInt(event.target.value), selectShow.value, selectBrand.value);
-
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
-});
-
-/**
- * Filter by brand
- */
-selectBrand.addEventListener('change', async(event) => {
-  const products = await fetchProductsByBrand(1, selectShow.value, event.target.value);
-
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
-});
-
-selectSort.addEventListener('change', async(event)=> {
-  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
-})
-
 
 /**
  * Call the fetch function if the toggle button is on and change it's color depending on it's state
  */
-const toggleReleased  = async() =>  {
+ const toggleReleased  = async() =>  {
   if(releasedIsOn){
     btnRecent.style.background='';
     releasedIsOn=false;
@@ -342,7 +274,7 @@ const toggleReleased  = async() =>  {
     btnRecent.style.background='lightgreen'
     releasedIsOn=true;
   }
-  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
+  const products = await fetchProducts(selectPage.value, selectShow.value, selectBrand.value);
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 } 
@@ -354,25 +286,54 @@ const togglePrice  = async() =>  {
     btnPrice.style.background='lightgreen'
     reasonablePriceIsOn=true;
   }
-  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
+  const products = await fetchProducts(selectPage.value, selectShow.value, selectBrand.value);
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
-} /*
-const toggleFavorite  = async() =>  {
-  if(favoriteIsOn){
-    btnFav.style.background='';
-    favoriteIsOn=false;
-  }else {
-    btnFav.style.background='lightgreen'
-    favoriteIsOn=true;
-  }
-  const products = await fetchProductsByBrand(selectPage.value, selectShow.value, selectBrand.value);
+} 
+
+/**
+ * Declaration of all Listeners
+ */
+
+/**
+ * Select the number of products to display
+ */
+
+selectShow.addEventListener('change', async(event) => {
+  const products = await fetchProducts(1, parseInt(event.target.value), selectBrand.value);
+
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
-} */
+});
+
+/**
+ * Select the page to browse to 
+ */
+selectPage.addEventListener('change', async(event) => {
+  const products = await fetchProducts(parseInt(event.target.value), selectShow.value, selectBrand.value);
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
+
+/**
+ * Filter by brand
+ */
+selectBrand.addEventListener('change', async(event) => {
+  const products = await fetchProducts(1, selectShow.value, event.target.value);
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
+
+selectSort.addEventListener('change', async(event)=> {
+  const products = await fetchProducts(selectPage.value, selectShow.value, selectBrand.value);
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+})
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const products = await fetchProducts();
+  const products = await fetchProducts(selectPage.value, selectShow.value, selectBrand.value)
 
   setCurrentProducts(products);
   render(currentProducts, currentPagination);

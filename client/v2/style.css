@@ -19,7 +19,7 @@ h2 {
 
 #options div {
     display: block;
-    color: #dddddd;
+    color: #eeeeee;
     padding: 10px;
     text-decoration: none;
     font-size: 15px;
@@ -31,7 +31,7 @@ h2 {
  
 #indicators div {
     display: block;
-    color: #dddddd;
+    color: #eeeeee;
     padding: 15px 20px;
     font-size: 15px;
     float: left;
@@ -42,14 +42,6 @@ h2 {
     padding: 5px;
     font-size: 15px;
 }
-
-.product {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    max-width: 300px;
-    margin: auto;
-    font-family: arial;
-  }
-
 
 table{
     border-spacing: 30px;
