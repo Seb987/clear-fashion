@@ -36,10 +36,7 @@ const getDB = module.exports.getDB = async () => {
  */
  module.exports.insert = async products => {
   try {
-    //const db = await getDB();
     const collection = await getDB();
-    // More details
-    // https://docs.mongodb.com/manual/reference/method/db.collection.insertMany/#insert-several-document-specifying-an-id-field
     const result = await collection.insertMany(products, {'ordered': false});
 
     return result;
@@ -59,8 +56,6 @@ const getDB = module.exports.getDB = async () => {
  */
  module.exports.find = async (query, collection, limit, offset, sort) => {
   try {
-    //const db = await getDB();
-    //const collection = db.collection(MONGODB_DB_COLLECTION);
     const result = await collection.find(query).sort(sort).skip(offset).limit(limit).toArray();
 
     return result;
@@ -72,8 +67,6 @@ const getDB = module.exports.getDB = async () => {
 
 module.exports.count = async (query, collection) => {
   try {
-    //const db = await getDB();
-    //const collection = db.collection(MONGODB_DB_COLLECTION);
     const result = await collection.find(query).count();
 
     return result;
